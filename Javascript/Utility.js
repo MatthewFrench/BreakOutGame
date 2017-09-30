@@ -1,4 +1,4 @@
-class Utility {
+export class Utility {
   /**
    * Creates a function maintaining the 'this' context.
    * @param owner

@@ -1,4 +1,4 @@
-class TitlePage {
+export class TitlePage {
   constructor(breakOutGame) {
     this.breakOutGame = breakOutGame;
 

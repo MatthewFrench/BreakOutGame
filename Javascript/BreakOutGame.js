@@ -1,4 +1,8 @@
-class BreakOutGame {
+import {GamePage} from "./Pages/GamePage.js";
+import {TitlePage} from "./Pages/TitlePage.js";
+import {Utility} from "./Utility.js";
+
+export class BreakOutGame {
   constructor() {
     this.currentPage = null;
     this.titlePage = new TitlePage(this);

@@ -1,4 +1,6 @@
-var breakOutGame = null;
+import {BreakOutGame} from "./Javascript/BreakOutGame.js";
+
+let breakOutGame = null;
 
 /** @function main
  * Entry point to the program.

@@ -1,4 +1,7 @@
-class GamePage {
+import {CanvasBoard} from "./GamePage/CanvasBoard.js";
+import {Utility} from "../Utility.js";
+
+export class GamePage {
   constructor(breakOutGame) {
     this.breakOutGame = breakOutGame;
     this.canvasBoard = new CanvasBoard(this);
