@@ -19,6 +19,8 @@ export class CanvasBoard {
     window.addEventListener('resize', Utility.CreateFunction(this, this.windowResize));
     window.requestAnimationFrame(()=>{this.windowResize();});
 
+    this.renderLoopRequest = null;
+
     this.setupCanvas();
   }
 
@@ -78,6 +80,24 @@ export class CanvasBoard {
     this.ctx = this.canvas.getContext('2d');
   }
 
+  show() {
+    this.renderLoop();
+  }
+
+  hide() {
+    if (this.renderLoopRequest != null) {
+      window.cancelAnimationFrame(this.renderLoopRequest);
+    }
+  }
+
+  renderLoop() {
+    this.gameDataLogic.runLogic();
+
+    this.renderBoard();
+
+    this.renderLoopRequest = window.requestAnimationFrame(()=>{this.renderLoop();});
+  }
+
   /**
    * Handles mouse down logic.
    * @param event
@@ -88,8 +108,6 @@ export class CanvasBoard {
 
   mouseMove(event) {
     this.gameDataLogic.setPaddleLocation(this.getCanvasMouseX(event));
-
-    this.renderBoard();
   }
 
   /**
@@ -99,10 +117,6 @@ export class CanvasBoard {
   mouseUp() {
     let x = this.getCanvasMouseX(event);
     let y = this.getCanvasMouseY(event);
-
-
-    //Redraw
-    this.renderBoard();
   }
 
   /**
@@ -157,6 +171,14 @@ export class CanvasBoard {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.gameDataLogic.getPaddle().render(this.ctx);
+
+    for (let brick of this.gameDataLogic.getBricks()) {
+      brick.render(this.ctx);
+    }
+
+    for (let ball of this.gameDataLogic.getBalls()) {
+      ball.render(this.ctx);
+    }
   }
 
   /**

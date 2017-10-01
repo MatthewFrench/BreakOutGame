@@ -58,7 +58,7 @@ export class GamePage {
    */
   show() {
     this.reset();
-    this.canvasBoard.renderBoard();
+    this.canvasBoard.show();
     window.requestAnimationFrame(()=>{this.windowResize();});
   }
 
@@ -66,7 +66,7 @@ export class GamePage {
    * Called when the game page is hidden.
    */
   hide() {
-
+    this.canvasBoard.hide();
   }
 
   /**

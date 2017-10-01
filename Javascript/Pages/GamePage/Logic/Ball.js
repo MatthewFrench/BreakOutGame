@@ -1,11 +1,29 @@
 
 
-export class Brick {
+export class Ball {
   constructor() {
     this.x = 500;
-    this.y = 100;
+    this.y = 800;
+    this.speedX = 0;
+    this.speedY = 0;
     this.height = 10;
-    this.width = 50;
+    this.width = 10;
+  }
+
+  getSpeedX() {
+    return this.speedX;
+  }
+
+  getSpeedY() {
+    return this.speedY;
+  }
+
+  setSpeedX(x) {
+    this.speedX = x;
+  }
+
+  setSpeedY(y) {
+    this.speedY = y;
   }
 
   getX() {
@@ -41,7 +59,7 @@ export class Brick {
   }
 
   render(context) {
-    context.fillStyle = 'red';
+    context.fillStyle = 'green';
     context.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
   }
 }
