@@ -120,6 +120,7 @@ export class CanvasBoard {
 
   tapMove(event) {
     this.gameDataLogic.setPaddleLocation(this.getCanvasTapX(event));
+    event.preventDefault();
   }
 
   /**
