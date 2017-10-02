@@ -14,7 +14,7 @@ export class CanvasBoard {
     this.containerDiv = null;
     this.messageDiv = null;
     this.scoreDiv = null;
-    this.gameDataLogic = new GameStateLogic();
+    this.gameDataLogic = new GameStateLogic(()=>{this.updateGameStatusMessage();});
 
     window.addEventListener('resize', Utility.CreateFunction(this, this.windowResize));
     window.requestAnimationFrame(()=>{this.windowResize();});
@@ -28,7 +28,7 @@ export class CanvasBoard {
    * Reset the board and game
    */
   reset() {
-    this.gameDataLogic = new GameStateLogic();
+    this.gameDataLogic = new GameStateLogic(()=>{this.updateGameStatusMessage();});
 
     this.windowResize();
 
@@ -90,6 +90,14 @@ export class CanvasBoard {
     }
   }
 
+  startLevel1() {
+    this.gameDataLogic.setupLevel1();
+  }
+
+  startLevel2() {
+    this.gameDataLogic.setupLevel2();
+  }
+
   renderLoop() {
     this.gameDataLogic.runLogic();
 
@@ -135,8 +143,9 @@ export class CanvasBoard {
    * Updates the top message.
    */
   updateGameStatusMessage() {
-    let statusText = '';
-    let scoreText = '';
+    let statusText = 'Stage: ' + this.gameDataLogic.getStageName()
+    +', Lives: ' + this.gameDataLogic.getLives();
+    let scoreText = 'Score: ' + this.gameDataLogic.getScore();
     this.setMessage(statusText);
     this.setScore(scoreText);
   }

@@ -6,6 +6,29 @@ export class Brick {
     this.y = 100;
     this.height = 10;
     this.width = 50;
+    this.markForRemoval = false;
+    this.color = 'red';
+    this.score = 1;
+  }
+
+  setScore(score) {
+    this.score = score;
+  }
+
+  getScore() {
+    return this.score;
+  }
+
+  setColor(color) {
+    this.color = color;
+  }
+
+  getMarkForRemoval() {
+    return this.markForRemoval;
+  }
+
+  setMarkForRemoval(mark) {
+    this.markForRemoval = mark;
   }
 
   getX() {
@@ -41,7 +64,7 @@ export class Brick {
   }
 
   render(context) {
-    context.fillStyle = 'red';
+    context.fillStyle = this.color;
     context.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
   }
 }

@@ -47,6 +47,7 @@ export class GamePage {
   reset() {
     this.restartDiv.remove();
     this.canvasBoard.reset();
+    this.canvasBoard.startLevel1();
   }
 
   restartButtonClicked() {

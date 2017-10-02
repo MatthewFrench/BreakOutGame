@@ -5,7 +5,7 @@ export class Paddle {
     this.x = 500;
     this.y = 800;
     this.height = 10;
-    this.width = 100;
+    this.width = 200;
   }
 
   getX() {
