@@ -27,6 +27,7 @@ canvas {
     box-shadow: 5px 5px 5px black;
     position: relative;
     cursor: none;
+    user-select: none;
 }
 .CanvasGreaterHeight {
     width: 100%;

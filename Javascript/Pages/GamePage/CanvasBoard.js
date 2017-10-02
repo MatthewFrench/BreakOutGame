@@ -67,7 +67,7 @@ export class CanvasBoard {
     this.containerDiv = document.createElement('div');
     this.containerDiv.className = 'ContainerDiv';
     this.canvas = document.createElement('canvas');
-    this.canvas.addEventListener('touchmove', Utility.CreateFunction(this, this.mouseMove));
+    this.canvas.addEventListener('touchmove', Utility.CreateFunction(this, this.tapMove));
     this.canvas.addEventListener('mousemove', Utility.CreateFunction(this, this.mouseMove));
     this.canvas.addEventListener('mousedown', Utility.CreateFunction(this, this.mouseDown));
     this.canvas.addEventListener('mouseup', Utility.CreateFunction(this, this.mouseUp));
@@ -118,6 +118,10 @@ export class CanvasBoard {
     this.gameDataLogic.setPaddleLocation(this.getCanvasMouseX(event));
   }
 
+  tapMove(event) {
+    this.gameDataLogic.setPaddleLocation(this.getCanvasTapX(event));
+  }
+
   /**
    * Handles the mouse up event.
    * @param event
@@ -158,6 +162,15 @@ export class CanvasBoard {
     //Get mouse position
     let bounds = event.target.getBoundingClientRect();
     let mouseX = event.clientX - bounds.left;
+    return mouseX * this.canvas.width / bounds.width;
+  }
+
+
+  getCanvasTapX(event) {
+    console.dir(event);
+    //Get tap position
+    let bounds = event.touches[0].target.getBoundingClientRect();
+    let mouseX = event.touches[0].clientX - bounds.left;
     return mouseX * this.canvas.width / bounds.width;
   }
 
