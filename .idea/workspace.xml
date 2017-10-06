@@ -2,11 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="24358ab2-5838-429f-bc09-1ff227ed64df" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Sounds/BrickBreak.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Sounds/LostLife.wav" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Sounds/PaddleHit.wav" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Javascript/Pages/GamePage.js" afterPath="$PROJECT_DIR$/Javascript/Pages/GamePage.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Javascript/Pages/GamePage/CanvasBoard.js" afterPath="$PROJECT_DIR$/Javascript/Pages/GamePage/CanvasBoard.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/Ball.js" afterPath="$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/Ball.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/Brick.js" afterPath="$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/Brick.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/GameStateLogic.js" afterPath="$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/GameStateLogic.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -46,8 +45,8 @@
       <file leaf-file-name="CanvasBoard.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Javascript/Pages/GamePage/CanvasBoard.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="366">
-              <caret line="234" column="28" lean-forward="true" selection-start-line="234" selection-start-column="28" selection-end-line="234" selection-end-column="28" />
+            <state relative-caret-position="2059">
+              <caret line="235" column="5" lean-forward="true" selection-start-line="235" selection-start-column="5" selection-end-line="235" selection-end-column="5" />
               <folding>
                 <element signature="e#0#57#0" expanded="true" />
               </folding>
@@ -68,8 +67,8 @@
       <file leaf-file-name="GameStateLogic.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/GameStateLogic.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="163">
-              <caret line="402" column="32" lean-forward="true" selection-start-line="402" selection-start-column="32" selection-end-line="402" selection-end-column="32" />
+            <state relative-caret-position="175">
+              <caret line="355" column="24" lean-forward="true" selection-start-line="355" selection-start-column="24" selection-end-line="355" selection-end-column="24" />
               <folding>
                 <element signature="e#0#33#0" expanded="true" />
               </folding>
@@ -80,7 +79,7 @@
       <file leaf-file-name="BreakOutGame.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Javascript/BreakOutGame.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-891">
+            <state relative-caret-position="-760">
               <caret line="2" column="35" lean-forward="false" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
               <folding />
             </state>
@@ -97,21 +96,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TitlePage.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Javascript/Pages/TitlePage.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="594">
-              <caret line="27" column="41" lean-forward="false" selection-start-line="27" selection-start-column="41" selection-end-line="27" selection-end-column="41" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="Brick.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/Brick.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="154">
               <caret line="7" column="20" lean-forward="false" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Paddle.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/Paddle.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="154">
+              <caret line="7" column="19" lean-forward="false" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -164,6 +163,7 @@
       <find>=== 0</find>
       <find>== 0</find>
       <find>ball</find>
+      <find>console.log</find>
     </findStrings>
     <replaceStrings>
       <replace>brick</replace>
@@ -226,10 +226,9 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="4" />
-    <option name="width" value="1434" />
-    <option name="height" value="798" />
+  <component name="ProjectFrameBounds">
+    <option name="width" value="1440" />
+    <option name="height" value="900" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -284,6 +283,11 @@
               <item name="GamePage" type="462c0819:PsiDirectoryNode" />
               <item name="Logic" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="BreakOutGame" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BreakOutGame" type="462c0819:PsiDirectoryNode" />
+              <item name="Sounds" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -302,6 +306,9 @@
     <property name="restartRequiresConfirmation" value="false" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Sounds" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
@@ -339,15 +346,15 @@
       <workItem from="1506798917867" duration="20132000" />
       <workItem from="1506906188538" duration="8413000" />
       <workItem from="1506960683406" duration="2436000" />
-      <workItem from="1507256359771" duration="6243000" />
+      <workItem from="1507256359771" duration="7349000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="37224000" />
+    <option name="totallyTimeSpent" value="38330000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="6" />
+    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19379845" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -669,14 +676,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/Paddle.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="7" column="19" lean-forward="false" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Javascript/Pages/TitlePage.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="594">
@@ -709,29 +708,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Javascript/BreakOutGame.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-891">
-          <caret line="2" column="35" lean-forward="false" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/Ball.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
           <caret line="15" column="25" lean-forward="false" selection-start-line="15" selection-start-column="25" selection-end-line="15" selection-end-column="25" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Javascript/Pages/GamePage/CanvasBoard.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="234" column="28" lean-forward="true" selection-start-line="234" selection-start-column="28" selection-end-line="234" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#57#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -753,10 +734,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/Paddle.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="7" column="19" lean-forward="false" selection-start-line="7" selection-start-column="19" selection-end-line="7" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Javascript/BreakOutGame.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-760">
+          <caret line="2" column="35" lean-forward="false" selection-start-line="2" selection-start-column="35" selection-end-line="2" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Javascript/Pages/GamePage/CanvasBoard.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2059">
+          <caret line="235" column="5" lean-forward="true" selection-start-line="235" selection-start-column="5" selection-end-line="235" selection-end-column="5" />
+          <folding>
+            <element signature="e#0#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Javascript/Pages/GamePage/Logic/GameStateLogic.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
-          <caret line="402" column="32" lean-forward="true" selection-start-line="402" selection-start-column="32" selection-end-line="402" selection-end-column="32" />
+        <state relative-caret-position="175">
+          <caret line="355" column="24" lean-forward="true" selection-start-line="355" selection-start-column="24" selection-end-line="355" selection-end-column="24" />
           <folding>
             <element signature="e#0#33#0" expanded="true" />
           </folding>

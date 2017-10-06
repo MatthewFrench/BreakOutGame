@@ -188,6 +188,7 @@ export class GameStateLogic {
           if (this.stillPlaying() && ball.getIsMain()) {
             this.lives -= 1;
             this.updateStatusCallback();
+            this.playLostLifeSound();
           } else if (this.stillPlaying() && !ball.getIsMain()) {
             this.balls.splice(ballIndex, 1);
             ballIndex -= 1;
@@ -257,6 +258,7 @@ export class GameStateLogic {
         }
         //Do a shift in x direction based on the paddle
         if (collisionSide !== null) {
+          this.playHitPaddleSound();
           //Crummy changing speed math because I'm too lazy to make a
           //vector class with automatic conversion on getters and setters
           //even though it would probably take less effort than this.
@@ -355,6 +357,7 @@ export class GameStateLogic {
             //Remove brick
             this.bricks.splice(brickIndex, 1);
             brickIndex--;
+            this.playBrickBreakSound();
 
             let newBall = new Ball();
             newBall.setX(ball.getX());
@@ -415,6 +418,21 @@ export class GameStateLogic {
         this.updateStatusCallback();
       }
     }
+  }
+
+  playBrickBreakSound() {
+    var audio = new Audio('./Sounds/BrickBreak.wav');
+    audio.play();
+  }
+
+  playLostLifeSound() {
+    var audio = new Audio('./Sounds/LostLife.wav');
+    audio.play();
+  }
+
+  playHitPaddleSound() {
+    var audio = new Audio('./Sounds/PaddleHit.wav');
+    audio.play();
   }
 
   stillPlaying() {
