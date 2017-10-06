@@ -8,6 +8,20 @@ export class Ball {
     this.speedY = 0;
     this.height = 10;
     this.width = 10;
+    this.color = 'green';
+    this.isMain = false;
+  }
+
+  setIsMain(isMain) {
+    this.isMain = isMain;
+  }
+
+  getIsMain() {
+    return this.isMain;
+  }
+
+  setColor(color) {
+    this.color = color;
   }
 
   getSpeedX() {
@@ -59,7 +73,7 @@ export class Ball {
   }
 
   render(context) {
-    context.fillStyle = 'green';
+    context.fillStyle = this.color;
     context.fillRect(this.x - this.width/2, this.y - this.height/2, this.width, this.height);
   }
 }

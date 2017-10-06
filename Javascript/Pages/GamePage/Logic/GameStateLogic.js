@@ -13,8 +13,9 @@ let CollisionSide = {
  * Handles manipulation of game data.
  */
 export class GameStateLogic {
-  constructor(updateStatusCallback) {
+  constructor(updateStatusCallback, showRestartButtonCallback) {
     this.updateStatusCallback = updateStatusCallback;
+    this.showRestartButtonCallback = showRestartButtonCallback;
     this.bricks = [];
     this.balls = [];
     this.paddle = new Paddle();
@@ -29,6 +30,9 @@ export class GameStateLogic {
     this.score = 0;
     this.lives = 3;
     this.stageName = '';
+
+    this.gameOver = false;
+    this.won = false;
   }
 
   setupLevel1() {
@@ -37,22 +41,35 @@ export class GameStateLogic {
     this.paddle = new Paddle();
     this.bricks = [];
     this.balls = [];
+    this.gameOver = false;
+    this.won = false;
     this.stageName = '1/2';
 
     let brickWidth = 100;
     let brickHeight = 40;
-    for (let y = brickHeight / 2; y < 340; y += brickHeight) {
+    for (let y = 0; y < 340; y += brickHeight) {
       let color = 'rgb(' + Math.round(Math.random() * 255) + ',' +
         Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ')';
-      for (let x = brickWidth / 2; x <= 1000 - brickWidth / 2; x += brickWidth) {
-        let brick = new Brick();
-        brick.setX(x);
-        brick.setY(y);
-        brick.setWidth(brickWidth);
-        brick.setHeight(brickHeight);
-        brick.setColor(color);
-        brick.setScore(1);
-        this.bricks.push(brick);
+      for (let x = 0; x <= 1000 - brickWidth; x += brickWidth) {
+
+        let smallBrickWidth = brickWidth / 3;
+        let smallBrickHeight = brickHeight / 3;
+        for (let x2 = 0; x2 <= brickWidth; x2+=smallBrickWidth) {
+          for (let y2 = 0; y2 <= brickHeight; y2+=smallBrickHeight) {
+            let brick = new Brick();
+            brick.setX(Math.floor(x + x2));
+            brick.setY(Math.floor(y + y2));
+            brick.setWidth(Math.ceil(smallBrickWidth));
+            brick.setHeight(Math.ceil(smallBrickHeight));
+            if (x2 === 0 || y2 === 0 || x2 === brickWidth || y2 === brickHeight) {
+              brick.setColor('white');
+            } else {
+              brick.setColor(color);
+            }
+            brick.setScore(1);
+            this.bricks.push(brick);
+          }
+        }
       }
     }
 
@@ -60,6 +77,8 @@ export class GameStateLogic {
     ball.setSpeedX(this.startSpeed * (Math.random() - 0.5));
     ball.setSpeedY(-this.startSpeed);
     ball.setY(790.0);
+    ball.setIsMain(true);
+    ball.setColor('blue');
     this.balls.push(ball);
 
     this.updateStatusCallback();
@@ -71,6 +90,8 @@ export class GameStateLogic {
     this.bricks = [];
     this.balls = [];
     this.stageName = '2/2';
+    this.won = false;
+    this.gameOver = false;
 
     let brickWidth = 100;
     let brickHeight = 40;
@@ -95,13 +116,19 @@ export class GameStateLogic {
     ball.setSpeedX(this.startSpeed * (Math.random() - 0.5));
     ball.setSpeedY(-this.startSpeed);
     ball.setY(790.0);
+    ball.setColor('blue');
+    ball.setIsMain(true);
     this.balls.push(ball);
 
     this.updateStatusCallback();
   }
 
   isOver() {
-    return this.bricks.length === 0;
+    return this.gameOver;
+  }
+
+  hasWon() {
+    return this.won;
   }
 
   getStageName() {
@@ -113,12 +140,16 @@ export class GameStateLogic {
   }
 
   runLogic() {
-    for (let ball of this.balls) {
+    let addBalls = [];
+
+    ballLoop:
+    for (let ballIndex = 0; ballIndex < this.balls.length; ++ballIndex) {
+      let ball = this.balls[ballIndex];
 
       //Slow down time for accurate calculations
       let maxSpeed = Math.ceil(Math.max(Math.abs(ball.getSpeedX()), Math.abs(ball.getSpeedY())));
       let calculationLoops = Math.max(maxSpeed, 1);
-      for (let calculationIndex = 0; calculationIndex < calculationLoops; calculationIndex += 1) {
+      for (let calculationIndex = 0; calculationIndex < calculationLoops; ++calculationIndex) {
         let speedXPerLoop = ball.getSpeedX() / calculationLoops;
         let speedYPerLoop = ball.getSpeedY() / calculationLoops;
 
@@ -129,78 +160,99 @@ export class GameStateLogic {
         let width = ball.getWidth();
         let height = ball.getHeight();
 
+        let ballHalfWidth = width/2;
+        let ballHalfHeight = height/2;
+        let ballLeftX = x - ballHalfWidth;
+        let ballRightX = x + ballHalfWidth;
+        let ballTopY = y - ballHalfHeight;
+        let ballBottomY = y + ballHalfHeight;
+
         //Do wall collisions
-        if (x - width / 2 < 0) {
-          x = width / 2;
+        if (ballLeftX < 0) {
+          x = ballHalfWidth;
           speedXPerLoop *= -1;
         }
-        if (x + width / 2 > this.gameWidth) {
-          x = this.gameWidth - width / 2;
+        if (ballRightX > this.gameWidth) {
+          x = this.gameWidth - ballHalfWidth;
           speedXPerLoop *= -1;
         }
-        if (y - height / 2 < 0) {
-          y = height / 2;
+        if (ballTopY < 0) {
+          y = ballHalfHeight;
           speedYPerLoop *= -1;
         }
-        if (y + height / 2 > this.gameHeight) {
-          y = this.gameHeight - height / 2;
+        if (ballBottomY > this.gameHeight) {
+          y = this.gameHeight - ballHalfHeight;
           speedYPerLoop *= -1;
+
+          //Take lives off if the ball hits the bottom
+          if (this.stillPlaying() && ball.getIsMain()) {
+            this.lives -= 1;
+            this.updateStatusCallback();
+          } else if (this.stillPlaying() && !ball.getIsMain()) {
+            this.balls.splice(ballIndex, 1);
+            ballIndex -= 1;
+            continue ballLoop;
+          }
         }
 
         //Do paddle collision
         let collisionSide = null;
         let collisionDistance = 1000;
-        if (x + width / 2 > this.paddle.getX() - this.paddle.getWidth() / 2 &&
-          x + width / 2 < this.paddle.getX() &&
-          y + height / 2 > this.paddle.getY() - this.paddle.getHeight() / 2 &&
-          y - height / 2 < this.paddle.getY() + this.paddle.getHeight() / 2) {
-          let dist = Math.abs((x + width / 2) - (this.paddle.getX() - this.paddle.getWidth() / 2));
+        let paddleLeftX = this.paddle.getX() - this.paddle.getWidth() / 2;
+        let paddleRightX = this.paddle.getX() + this.paddle.getWidth() / 2;
+        let paddleTopY = this.paddle.getY() - this.paddle.getHeight() / 2;
+        let paddleBottomY = this.paddle.getY() + this.paddle.getHeight() / 2;
+        if (ballRightX > paddleLeftX &&
+          ballRightX < this.paddle.getX() &&
+          ballBottomY > paddleTopY &&
+          ballTopY < paddleBottomY) {
+          let dist = Math.abs((ballRightX) - (paddleLeftX));
           if (dist < collisionDistance) {
             collisionSide = CollisionSide.Left;
             collisionDistance = dist;
           }
         }
-        if (x - width / 2 < this.paddle.getX() + this.paddle.getWidth() / 2 &&
-          x - width / 2 > this.paddle.getX() &&
-          y + height / 2 > this.paddle.getY() - this.paddle.getHeight() / 2 &&
-          y - height / 2 < this.paddle.getY() + this.paddle.getHeight() / 2) {
-          let dist = Math.abs((x - width / 2) - (this.paddle.getX() + this.paddle.getWidth() / 2));
+        if (ballLeftX < paddleRightX &&
+          ballLeftX > this.paddle.getX() &&
+          ballBottomY > paddleTopY &&
+          ballTopY < paddleBottomY) {
+          let dist = Math.abs((ballLeftX) - (paddleRightX));
           if (dist < collisionDistance) {
             collisionSide = CollisionSide.Right;
             collisionDistance = dist;
           }
         }
-        if (y + height / 2 > this.paddle.getY() - this.paddle.getHeight() / 2 &&
-          y + height / 2 < this.paddle.getY() &&
-          x + width / 2 > this.paddle.getX() - this.paddle.getWidth() / 2 &&
-          x - width / 2 < this.paddle.getX() + this.paddle.getWidth() / 2) {
-          let dist = Math.abs((y + height / 2) - (this.paddle.getY() - this.paddle.getHeight() / 2));
+        if (ballBottomY > paddleTopY &&
+          ballBottomY < this.paddle.getY() &&
+          ballRightX > paddleLeftX &&
+          ballLeftX < paddleRightX) {
+          let dist = Math.abs((ballBottomY) - (paddleTopY));
           if (dist < collisionDistance) {
             collisionSide = CollisionSide.Top;
             collisionDistance = dist;
           }
         }
-        if (y - height / 2 < this.paddle.getY() + this.paddle.getHeight() / 2 &&
-          y - height / 2 > this.paddle.getY() &&
-          x + width / 2 > this.paddle.getX() - this.paddle.getWidth() / 2 &&
-          x - width / 2 < this.paddle.getX() + this.paddle.getWidth() / 2) {
-          let dist = Math.abs((y - height / 2) - (this.paddle.getY() + this.paddle.getHeight() / 2));
+        if (ballTopY < paddleBottomY &&
+          ballTopY > this.paddle.getY() &&
+          ballRightX > paddleLeftX &&
+          ballLeftX < paddleRightX) {
+          let dist = Math.abs((ballTopY) - (paddleBottomY));
           if (dist < collisionDistance) {
             collisionSide = CollisionSide.Bottom;
             collisionDistance = dist;
           }
         }
         if (collisionSide === CollisionSide.Left) {
-          x = this.paddle.getX() - this.paddle.getWidth() / 2 - width / 2;
+          x = paddleLeftX - ballHalfWidth;
           speedXPerLoop *= -1;
         } else if (collisionSide === CollisionSide.Right) {
-          x = this.paddle.getX() + this.paddle.getWidth() / 2 + width / 2;
+          x = paddleRightX + ballHalfWidth;
           speedXPerLoop *= -1;
         } else if (collisionSide === CollisionSide.Top) {
-          y = this.paddle.getY() - this.paddle.getHeight() / 2 - height / 2;
+          y = paddleTopY - ballHalfHeight;
           speedYPerLoop *= -1;
         } else if (collisionSide === CollisionSide.Bottom) {
-          y = this.paddle.getY() + this.paddle.getHeight() / 2 + height / 2;
+          y = paddleBottomY + ballHalfHeight;
           speedYPerLoop *= -1;
         }
         //Do a shift in x direction based on the paddle
@@ -223,81 +275,98 @@ export class GameStateLogic {
         }
 
         //Do brick collision
-        for (let brick of this.bricks) {
+        for (let brickIndex = 0; brickIndex < this.bricks.length; ++brickIndex) {
+          let brick = this.bricks[brickIndex];
+          let brickLeftX = brick.getX() - brick.getWidth() / 2;
           //Skip the brick if it's outside
-          if (x + width / 2 < brick.getX() - brick.getWidth() / 2) {
+          if (ballRightX < brickLeftX) {
             continue;
           }
-          if (x - width / 2 > brick.getX() + brick.getWidth() / 2) {
+          let brickRightX = brick.getX() + brick.getWidth() / 2;
+          if (ballLeftX > brickRightX) {
             continue;
           }
-          if (y + height / 2 < brick.getY() - brick.getHeight() / 2) {
+          let brickTopY = brick.getY() - brick.getHeight() / 2;
+          if (ballBottomY < brickTopY) {
             continue;
           }
-          if (y - height / 2 > brick.getY() + brick.getHeight() / 2) {
+          let brickBottomY = brick.getY() + brick.getHeight() / 2;
+          if (ballTopY > brickBottomY) {
             continue;
           }
 
           let collisionSide = null;
           let collisionDistance = 1000;
-          if (x + width / 2 > brick.getX() - brick.getWidth() / 2 &&
-            x + width / 2 < brick.getX() &&
-            y + height / 2 > brick.getY() - brick.getHeight() / 2 &&
-            y - height / 2 < brick.getY() + brick.getHeight() / 2) {
-            let dist = Math.abs((x + width / 2) - (brick.getX() - brick.getWidth() / 2));
+          if (ballRightX > brickLeftX &&
+            ballRightX < brick.getX() &&
+            ballBottomY > brickTopY &&
+            ballTopY < brickBottomY) {
+            let dist = Math.abs((ballRightX) - (brickLeftX));
             if (dist < collisionDistance) {
               collisionSide = CollisionSide.Left;
               collisionDistance = dist;
             }
           }
-          if (x - width / 2 < brick.getX() + brick.getWidth() / 2 &&
-            x - width / 2 > brick.getX() &&
-            y + height / 2 > brick.getY() - brick.getHeight() / 2 &&
-            y - height / 2 < brick.getY() + brick.getHeight() / 2) {
-            let dist = Math.abs((x - width / 2) - (brick.getX() + brick.getWidth() / 2));
+          if (ballLeftX < brickRightX &&
+            ballLeftX > brick.getX() &&
+            ballBottomY > brickTopY &&
+            ballTopY < brickBottomY) {
+            let dist = Math.abs((ballLeftX) - (brickRightX));
             if (dist < collisionDistance) {
               collisionSide = CollisionSide.Right;
               collisionDistance = dist;
             }
           }
-          if (y + height / 2 > brick.getY() - brick.getHeight() / 2 &&
-            y + height / 2 < brick.getY() &&
-            x + width / 2 > brick.getX() - brick.getWidth() / 2 &&
-            x - width / 2 < brick.getX() + brick.getWidth() / 2) {
-            let dist = Math.abs((y + height / 2) - (brick.getY() - brick.getHeight() / 2));
+          if (ballBottomY > brickTopY &&
+            ballBottomY < brick.getY() &&
+            ballRightX > brickLeftX &&
+            ballLeftX < brickRightX) {
+            let dist = Math.abs((ballBottomY) - (brickTopY));
             if (dist < collisionDistance) {
               collisionSide = CollisionSide.Top;
               collisionDistance = dist;
             }
           }
-          if (y - height / 2 < brick.getY() + brick.getHeight() / 2 &&
-            y - height / 2 > brick.getY() &&
-            x + width / 2 > brick.getX() - brick.getWidth() / 2 &&
-            x - width / 2 < brick.getX() + brick.getWidth() / 2) {
-            let dist = Math.abs((y - height / 2) - (brick.getY() + brick.getHeight() / 2));
+          if (ballTopY < brickBottomY &&
+            ballTopY > brick.getY() &&
+            ballRightX > brickLeftX &&
+            ballLeftX < brickRightX) {
+            let dist = Math.abs((ballTopY) - (brickBottomY));
             if (dist < collisionDistance) {
               collisionSide = CollisionSide.Bottom;
               collisionDistance = dist;
             }
           }
           if (collisionSide === CollisionSide.Left) {
-            x = brick.getX() - brick.getWidth() / 2 - width / 2;
+            x = brickLeftX - ballHalfWidth;
             speedXPerLoop *= -1;
           } else if (collisionSide === CollisionSide.Right) {
-            x = brick.getX() + brick.getWidth() / 2 + width / 2;
+            x = brickRightX + ballHalfWidth;
             speedXPerLoop *= -1;
           } else if (collisionSide === CollisionSide.Top) {
-            y = brick.getY() - brick.getHeight() / 2 - height / 2;
+            y = brickTopY - ballHalfHeight;
             speedYPerLoop *= -1;
           } else if (collisionSide === CollisionSide.Bottom) {
-            y = brick.getY() + brick.getHeight() / 2 + height / 2;
+            y = brickBottomY + ballHalfHeight;
             speedYPerLoop *= -1;
           }
 
-          if (collisionSide !== null && brick.getMarkForRemoval() === false) {
-            brick.setMarkForRemoval(true);
-            this.score += brick.getScore();
-            this.updateStatusCallback();
+          if (collisionSide !== null) {
+            //Remove brick
+            this.bricks.splice(brickIndex, 1);
+            brickIndex--;
+
+            let newBall = new Ball();
+            newBall.setX(ball.getX());
+            newBall.setY(ball.getY());
+            newBall.setSpeedX(ball.getSpeedX() * -1);
+            newBall.setSpeedY(Math.abs(ball.getSpeedY()));
+            addBalls.push(newBall);
+
+            if (this.stillPlaying()) {
+              this.score += brick.getScore();
+              this.updateStatusCallback();
+            }
             //Speed up the ball
             if (Math.pow(speedXPerLoop * calculationLoops, 2) +
               Math.pow(speedYPerLoop * calculationLoops, 2) < this.maxSpeed) {
@@ -307,7 +376,6 @@ export class GameStateLogic {
           }
         }
 
-
         ball.setSpeedX(speedXPerLoop * calculationLoops);
         ball.setSpeedY(speedYPerLoop * calculationLoops);
         ball.setX(x);
@@ -315,11 +383,43 @@ export class GameStateLogic {
       }
     }
 
-    //Remove marked blocks
-    let oldCount = this.bricks.length;
-    this.bricks = this.bricks.filter((brick) => {
-      return !brick.getMarkForRemoval();
-    });
+    //Add balls
+    for (let ball of addBalls) {
+      this.balls.push(ball);
+    }
+
+    //Check if dead
+    if (this.gameOver == false) {
+      if (this.lives <= 0) {
+        this.showRestartButtonCallback();
+        this.gameOver = true;
+        this.updateStatusCallback();
+        //Spawn a ton of balls for fun
+        for (let i = 0 ;i < 100; i++) {
+          let ball = new Ball();
+          ball.setSpeedX(20.0 * (Math.random() - 0.5));
+          ball.setSpeedY(-20.0 * Math.random() + -1.0);
+          ball.setY(790.0);
+          this.balls.push(ball);
+        }
+      } else if (this.bricks.length === 0) {
+        if (this.stageName === '1/2') {
+          //Switch to second stage
+          this.setupLevel2();
+        } else {
+          //Say we won
+          this.won = true;
+          this.gameOver = true;
+          this.showRestartButtonCallback();
+        }
+        this.updateStatusCallback();
+      }
+    }
+  }
+
+  stillPlaying() {
+    return this.gameOver === false &&
+      this.won === false && this.lives > 0 && this.bricks.length > 0;
   }
 
   getScore() {

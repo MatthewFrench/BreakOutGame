@@ -14,7 +14,8 @@ export class CanvasBoard {
     this.containerDiv = null;
     this.messageDiv = null;
     this.scoreDiv = null;
-    this.gameDataLogic = new GameStateLogic(()=>{this.updateGameStatusMessage();});
+    this.gameDataLogic = new GameStateLogic(()=>{this.updateGameStatusMessage();},
+                  ()=>{this.showRestartButton();});
 
     window.addEventListener('resize', Utility.CreateFunction(this, this.windowResize));
     window.requestAnimationFrame(()=>{this.windowResize();});
@@ -24,11 +25,16 @@ export class CanvasBoard {
     this.setupCanvas();
   }
 
+  showRestartButton() {
+    this.gamePage.showRestartButton();
+  }
+
   /**
    * Reset the board and game
    */
   reset() {
-    this.gameDataLogic = new GameStateLogic(()=>{this.updateGameStatusMessage();});
+    this.gameDataLogic = new GameStateLogic(()=>{this.updateGameStatusMessage();},
+      ()=>{this.showRestartButton();});
 
     this.windowResize();
 
@@ -78,6 +84,14 @@ export class CanvasBoard {
     this.mainDiv.appendChild(this.messageDiv);
     this.mainDiv.appendChild(this.containerDiv);
     this.ctx = this.canvas.getContext('2d');
+
+
+
+    this.brickCanvas = document.createElement('canvas');
+    this.brickCanvas.width = 1000;
+    this.brickCanvas.height = 1000;
+    this.brickCtx = this.brickCanvas.getContext('2d');
+    this.lastBrickDrawCount = 0;
   }
 
   show() {
@@ -148,11 +162,20 @@ export class CanvasBoard {
    * Updates the top message.
    */
   updateGameStatusMessage() {
-    let statusText = 'Stage: ' + this.gameDataLogic.getStageName()
-    +', Lives: ' + this.gameDataLogic.getLives();
+    let statusText = '';
+    if (this.gameDataLogic.stillPlaying()) {
+      statusText = 'Stage: ' + this.gameDataLogic.getStageName()
+        +', Lives: ' + this.gameDataLogic.getLives();
+    } else {
+      if (this.gameDataLogic.hasWon()) {
+        statusText = 'You won!';
+      } else {
+        statusText = 'You lost.';
+      }
+    }
     let scoreText = 'Score: ' + this.gameDataLogic.getScore();
-    this.setMessage(statusText);
     this.setScore(scoreText);
+    this.setMessage(statusText);
   }
 
   /**
@@ -195,11 +218,20 @@ export class CanvasBoard {
 
     this.gameDataLogic.getPaddle().render(this.ctx);
 
-    for (let brick of this.gameDataLogic.getBricks()) {
-      brick.render(this.ctx);
+    if (this.lastBrickDrawCount !== this.gameDataLogic.getBricks().length) {
+      this.lastBrickDrawCount = this.gameDataLogic.getBricks().length;
+      this.brickCtx.clearRect(0, 0, 1000, 1000);
+      let bricks = this.gameDataLogic.getBricks();
+      for (let brickIndex = 0; brickIndex < bricks.length; ++brickIndex) {
+        let brick = bricks[brickIndex];
+        brick.render(this.brickCtx);
+      }
     }
+    this.ctx.drawImage(this.brickCanvas, 0, 0);
 
-    for (let ball of this.gameDataLogic.getBalls()) {
+    let balls = this.gameDataLogic.getBalls();
+    for (let ballIndex = balls.length - 1; ballIndex >= 0; --ballIndex) {
+      let ball = balls[ballIndex];
       ball.render(this.ctx);
     }
   }

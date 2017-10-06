@@ -6,7 +6,6 @@ export class Brick {
     this.y = 100;
     this.height = 10;
     this.width = 50;
-    this.markForRemoval = false;
     this.color = 'red';
     this.score = 1;
   }
@@ -21,14 +20,6 @@ export class Brick {
 
   setColor(color) {
     this.color = color;
-  }
-
-  getMarkForRemoval() {
-    return this.markForRemoval;
-  }
-
-  setMarkForRemoval(mark) {
-    this.markForRemoval = mark;
   }
 
   getX() {

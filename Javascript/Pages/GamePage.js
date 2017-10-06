@@ -41,6 +41,8 @@ export class GamePage {
   }
 
   showRestartButton() {
+    console.log('1');
+    console.log('Showing restart div');
     this.mainDiv.appendChild(this.restartDiv);
   }
 
