@@ -95,12 +95,17 @@ export class CanvasBoard {
   }
 
   show() {
+    if (this.renderLoopRequest != null) {
+      window.cancelAnimationFrame(this.renderLoopRequest);
+      this.renderLoopRequest = null;
+    }
     this.renderLoop();
   }
 
   hide() {
     if (this.renderLoopRequest != null) {
       window.cancelAnimationFrame(this.renderLoopRequest);
+      this.renderLoopRequest = null;
     }
   }
 
@@ -230,9 +235,14 @@ export class CanvasBoard {
     this.ctx.drawImage(this.brickCanvas, 0, 0);
 
     let balls = this.gameDataLogic.getBalls();
-    for (let ballIndex = balls.length - 1; ballIndex >= 0; --ballIndex) {
-      let ball = balls[ballIndex];
-      ball.render(this.ctx);
+    this.ctx.fillStyle = 'green';
+    for (let ballIndex = 0; ballIndex < balls.length; ++ballIndex) {
+      balls[ballIndex].render(this.ctx);
+    }
+
+    if (this.gameDataLogic.getMainBall() !== null) {
+      this.ctx.fillStyle = 'blue';
+      this.gameDataLogic.getMainBall().render(this.ctx);
     }
   }
 

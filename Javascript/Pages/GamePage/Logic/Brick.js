@@ -8,6 +8,29 @@ export class Brick {
     this.width = 50;
     this.color = 'red';
     this.score = 1;
+    this.inArrays = [];
+  }
+
+  addReference(refArray) {
+    this.inArrays.push(refArray);
+  }
+  removeFromReferences() {
+    for (let array of this.inArrays) {
+      array.splice(array.indexOf(this), 1);
+    }
+    this.inArrays = [];
+  }
+
+  checkReferences() {
+    for (let array in this.inArrays) {
+      if (array.length === 0) {
+        console.log('Invalid reference');
+      } else {
+        if (array.indexOf(this) === -1) {
+          console.log('Can\'t find self in reference');
+        }
+      }
+    }
   }
 
   setScore(score) {
